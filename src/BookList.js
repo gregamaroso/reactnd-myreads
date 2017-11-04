@@ -10,7 +10,10 @@ export class BookGrid extends Component {
       <ol className="books-grid">
         {books.map((book) => (
           <li key={book.id}>
-            <Book book={book} onUpdateBook={onUpdateBook} />
+            <Book
+              book={book}
+              onUpdateBook={onUpdateBook}
+              />
           </li>
         ))}
       </ol>

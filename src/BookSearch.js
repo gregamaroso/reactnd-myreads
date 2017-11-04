@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import { BookGrid } from './BookList';
-// import Book from './Book';
 
 class BookSearch extends Component {
   constructor(props) {
@@ -12,51 +11,85 @@ class BookSearch extends Component {
 
   state = {
     query: '',
-    results: ''
+    results: [],
+    isLoading: false,
+    hasMadeInitialQuery: false
   }
 
+  /**
+   * In the real world we'd likely filter out more things here
+   */
   sanitizeQuery = function(q) {
-    q = q.trim();
     return q;
   };
 
   /**
-   * Note the search throttler
+   * Search for books using the API
+   * Note: this throttles requests similar to how we'd handle large volume sites
    */
   searchBooks = (query) => {
     query = this.sanitizeQuery(query);
 
     // Immediately update the query state, but throttle
     // the ajax stuff as we'd normally do.
-    this.setState({ query });
+    this.setState({
+      query: query,
+      isLoading: true
+    });
 
     if (this.timeout) {
       clearTimeout(this.timeout);
     }
 
     this.timeout = setTimeout(() => {
-      if (query) {
+      // Trim the query variable before making ajax requests
+      // so that we don't get duped by spaces
+      query = query.trim();
+
+      if (query.length > 0) {
         BooksAPI
           .search(query)
           .then(results => {
-            console.log(results);
-            this.setState({ results });
+            if (results.length) {
+              results = results.filter((book) => this.props.books.findIndex(b => b.id === book.id) === -1);
+            }
+            else {
+              results = [];
+            }
+            this.setState({
+              results: results,
+              isLoading: false,
+              hasMadeInitialQuery: true
+             });
           });
+       }
+       else {
+         this.clearQuery();
        }
     }, 200);
   };
 
   clearQuery = () => {
     this.setState({
-      query: ''
+      query: '',
+      results: [],
+      isLoading: false
     });
   };
 
   render() {
-    const { books, onUpdateBook } = this.props;
-    const { query } = this.state;
+    const { onUpdateBook } = this.props;
+    const { query, isLoading } = this.state;
 
-    // TODO: search and filter
+    const books = this.state.results;
+    const hasResults = books.length > 0;
+    const hasMadeInitialQuery = this.state.hasMadeInitialQuery;
+
+    // Dynamically generate a list of classnames for the results wrapper
+    const resultsClasses = [
+      'search-books-results',
+      (isLoading ? 'loading' : '')
+    ].filter((v) => v.length > 0).join(' ');
 
     return (
       <div className="search-books">
@@ -74,11 +107,16 @@ class BookSearch extends Component {
               />
           </div>
         </div>
-        <div className="search-books-results">
+        <div className={resultsClasses}>
+          {hasResults && (
           <BookGrid
             books={books}
             onUpdateBook={onUpdateBook}
             />
+          )}
+          {hasMadeInitialQuery && !hasResults && (
+            <p>No results</p>
+          )}
         </div>
       </div>
     );

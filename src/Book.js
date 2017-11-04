@@ -4,9 +4,8 @@ class Book extends Component {
   render() {
     const { book, onUpdateBook } = this.props;
 
-    // Convenience vars
-    const thumb = book.imageLinks.thumbnail;
-    const authors = book.authors.join(', ');
+    const thumb = (book.imageLinks && book.imageLinks.thumbnail) ? book.imageLinks.thumbnail : '';
+    const authors = (book.authors || []).join(' ');
     const shelf = book.shelf || 'none';
 
     return (
