@@ -51,11 +51,25 @@ class BookSearch extends Component {
           .search(query)
           .then(results => {
             if (results.length) {
-              results = results.filter((book) => this.props.books.findIndex(b => b.id === book.id) === -1);
+              // Filters our books from the results array that are already found on a shelf. This is normally
+              // valid to do; however, the rubric says to show them.
+              // results = results.filter((book) => this.props.books.findIndex(b => b.id === book.id) === -1);
+
+              // Since we're not filtering out the current books (see above), we'll need to ensure that each result
+              // already in the books array gets applied to the appropriate shelf.
+              const allBooks = this.props.books;
+              results = results.map((r) => {
+                const i = allBooks.findIndex(b => b.id === r.id);
+                if (i !== -1) {
+                  r.shelf = allBooks[i].shelf;
+                }
+                return r;
+              });
             }
             else {
               results = [];
             }
+
             this.setState({
               results: results,
               isLoading: false,

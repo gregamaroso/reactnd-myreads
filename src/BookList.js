@@ -52,9 +52,24 @@ export default class BookList extends Component {
           <h1>MyReads</h1>
         </div>
         <div className="list-books-content">
-          <BookShelf title="Current Reads" shelf="currentlyReading" books={books} onUpdateBook={onUpdateBook} />
-          <BookShelf title="Want to Read" shelf="wantToRead" books={books} onUpdateBook={onUpdateBook} />
-          <BookShelf title="Read" shelf="read" books={books} onUpdateBook={onUpdateBook} />
+          <BookShelf
+            title="Currently Reading"
+            shelf="currentlyReading"
+            books={books}
+            onUpdateBook={onUpdateBook}
+            />
+          <BookShelf
+            title="Want to Read"
+            shelf="wantToRead"
+            books={books}
+            onUpdateBook={onUpdateBook}
+            />
+          <BookShelf
+            title="Read"
+            shelf="read"
+            books={books}
+            onUpdateBook={onUpdateBook}
+            />
         </div>
         <div className="open-search">
           <Link to="/search">Add a book</Link>
