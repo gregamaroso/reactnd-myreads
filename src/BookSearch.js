@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
-import { BookGrid } from './BookList';
+import BookGrid from './BookGrid';
 
-class BookSearch extends Component {
-  constructor(props) {
-    super(props);
-    this.timeout = 0;
-  }
-
+export default class BookSearch extends Component {
   state = {
     query: '',
     results: [],
@@ -17,19 +12,10 @@ class BookSearch extends Component {
   }
 
   /**
-   * In the real world we'd likely filter out more things here
-   */
-  sanitizeQuery = function(q) {
-    return q;
-  };
-
-  /**
    * Search for books using the API
    * Note: this throttles requests similar to how we'd handle large volume sites
    */
   searchBooks = (query) => {
-    query = this.sanitizeQuery(query);
-
     // Immediately update the query state, but throttle
     // the ajax stuff as we'd normally do.
     this.setState({
@@ -136,5 +122,3 @@ class BookSearch extends Component {
     );
   }
 }
-
-export default BookSearch

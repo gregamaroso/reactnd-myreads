@@ -23,16 +23,31 @@ class BooksApp extends React.Component {
   updateBook = (book, shelf) => {
     BooksAPI
       .update(book, shelf)
-      .then(() => {
-        book.shelf = shelf;
+      .then(() => { });
+  };
 
-        // TODO: revisit this logic
-        this.setState(state => {
-          if (state.books.findIndex(b => b.id === book.id) === -1) {
-            state.books.push(book);
-          }
-        })
-      });
+  onUpdateBook = (book, shelf) => {
+    this.updateBook(book, shelf);
+
+    let books = this.state.books;
+
+    // Set which shelf the current book object should be on
+    book.shelf = shelf;
+
+    // Determine if this is a new book based on i !== -1
+    const i = books.findIndex(b => b.id === book.id);
+
+    // If it's a new book (i.e. i === -1), then push it onto the books array
+    // Otherwise, replace the book item in the array with the new value
+    if (i === -1) {
+      books.push(book);
+    }
+    else {
+      books[i] = book;
+    }
+
+    // Finally, update state with the munged book array
+    this.setState({ books });
   };
 
   render() {
@@ -41,14 +56,15 @@ class BooksApp extends React.Component {
         <Route exact path="/search" render={() => (
           <BookSearch
             books={this.state.books}
-            onUpdateBook={this.updateBook}
+            onUpdateBook={this.onUpdateBook}
+            timeout="0"
             />
         )} />
 
         <Route exact path="/" render={() => (
           <BookList
             books={this.state.books}
-            onUpdateBook={this.updateBook}
+            onUpdateBook={this.onUpdateBook}
             />
         )} />
       </div>
