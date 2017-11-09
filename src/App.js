@@ -29,7 +29,9 @@ class BooksApp extends React.Component {
   onUpdateBook = (book, shelf) => {
     this.updateBook(book, shelf);
 
-    let books = this.state.books;
+    // Make a copy of the current books array which we'll modify
+    // before setting the new state
+    let books = [...this.state.books];
 
     // Set which shelf the current book object should be on
     book.shelf = shelf;
